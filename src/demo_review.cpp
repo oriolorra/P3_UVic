@@ -1,16 +1,20 @@
 #include <ros/ros.h>
-
+#include <ros/package.h>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
-
+#include <std_msgs/Int32MultiArray.h>
 
 #include <moveit/move_group_interface/move_group.h>
 #include <moveit/robot_trajectory/robot_trajectory.h>
+#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
+#include <moveit/robot_state/robot_state.h>
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
 
+#include <yaml-cpp/yaml.h> 
+#include <string.h>
 #include "path.h"
 
-void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_interface::MoveGroup::Plan &plan, std::vector<geometry_msgs::Pose>& waypoints){
+void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_interface::MoveGroup::Plan &plan, std::vector<geometry_msgs::Pose>& waypoints, const std::string moveit_group){
   moveit_msgs::RobotTrajectory trajectory_msg;
 
   double fraction = arm.computeCartesianPath(waypoints,
@@ -19,7 +23,7 @@ void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_i
                                                trajectory_msg, false);
   // The trajectory needs to be modified so it will include velocities as well.
   // First to create a RobotTrajectory object
-  robot_trajectory::RobotTrajectory rt(arm.getCurrentState()->getRobotModel(), "manipulator");
+  robot_trajectory::RobotTrajectory rt(arm.getCurrentState()->getRobotModel(), moveit_group);
 
   // Second get a RobotTrajectory from trajectory
   rt.setRobotTrajectoryMsg(*arm.getCurrentState(), trajectory_msg);
@@ -43,8 +47,6 @@ void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_i
   }
 }
 
-
-
 int main(int argc, char **argv)
 {
   Path path;
@@ -59,11 +61,11 @@ int main(int argc, char **argv)
 
   std::vector<geometry_msgs::Pose> waypoints;
 
-        ros::init(argc, argv, "demo_review");
+	ros::init(argc, argv, "demo_review");
   ros::NodeHandle nh;
 
   ros::Publisher pub_di = nh.advertise<std_msgs::Int32MultiArray>("/b2r_beckhoff/digital_commands",10);
-        ros::AsyncSpinner spinner(1);
+	ros::AsyncSpinner spinner(1);
   spinner.start();
 
   std::string moveit_group = yaml_config["MoveItGroup"].as<std::string>();
@@ -78,7 +80,7 @@ int main(int argc, char **argv)
   geometry_msgs::Pose startingPose = group.getCurrentPose().pose;
   ROS_INFO_STREAM("Starting POSE: " << startingPose.position.x << "  " << startingPose.position.y << "  " << startingPose.position.z);
   waypoints.clear();
-
+  
   for(int j=1; j <= trajectories_size; j++){
 
     auto trajectory_node = yaml_config["Trajectory" + std::to_string(j)];
@@ -120,9 +122,9 @@ int main(int argc, char **argv)
         di_msg.data.push_back(path_node["Tool_enable"].as<int>());
         di_msg.data.push_back(path_node["Cablereel_enable"].as<int>());
         di_msg.data.push_back(path_node["Cablereel_direction"].as<int>());
-
+        
         pub_di.publish(di_msg);
-      }
+      } 
     }
 
     executePath(group, my_plan, waypoints, moveit_group);
