@@ -1,14 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(P3_UVic)
+project(p3_uvic)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
-# add_definitions(-std=c++11)
+add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packagess
 find_package(Eigen3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS moveit_ros_planning_interface)
+#find_package(yaml-cpp REQUIRED)
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 
@@ -149,7 +150,8 @@ add_executable(${PROJECT_NAME}_node src/ur5_move_group.cpp)
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_node
-   PathLib
+   PathLibUVic
+   yaml-cpp
    ${catkin_LIBRARIES}
    ${Boost_LIBRARIES}
  )

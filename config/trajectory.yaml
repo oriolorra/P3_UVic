@@ -1,174 +1,23 @@
 
 #To add more path to the trajectory, you just need to add more paths with its configuration.
-MoveItGroup: arm_without_slider
-
+MoveItGroup: manipulator
 Totalsize: 1
-
 Trajectory1:
   size: 1
+  # Path1:
+  #     Type: Circle
+  #     Radius: 0.1
+  #     StartAngle: 0
+  #     EndAngle: 360
+  #     AngleStep: 3
   Path1:
-     Type: DI
-     Emergency_stop: 0        # 1: Direct Stop of every motion and peripherals 0: Nothing Changes
-     Aspiration_enable: 0     # 1: ON, 0: OFF
-     Tool_enable: 0           # 1: ON, 0: OFF
-     Cablereel_enable: 0      # 1: ON, 0: OFF
-     Cablereel_direction: 0
-  Path2:                     
       Type: Line
-      Lenght: 0.5
-      Direction: -1                  
-      LenghtStep: 0.01
-  Path3:
-      Type: Line
-      Lenght: 0.07
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path4:
-      Type: Line
-      Lenght: 0.5
+      Lenght: 0.05
       Direction: 1                  
-      LenghtStep: 0.01
-  Path5:                 
-      Type: Line
-      Lenght: 0.07
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path6:                    
-      Type: Line
-      Lenght: 0.5
-      Direction: -1                  
-      LenghtStep: 0.01
-  Path7:                    
-      Type: Line
-      Lenght: 0.07
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path8:
-      Type: Line
-      Lenght: 0.5
-      Direction: 1                  
-      LenghtStep: 0.01
-  Path9:                 
-      Type: Line
-      Lenght: 0.07
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path10:                    
-      Type: Line
-      Lenght: 0.45
-      Direction: -1                  
-      LenghtStep: 0.01
-  Path11:                    
-      Type: Line
-      Lenght: 0.07
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path12:
-      Type: Line
-      Lenght: 0.45
-      Direction: 1                  
-      LenghtStep: 0.01
-  Path13:                 
-      Type: Line
-      Lenght: 0.07
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path14:                    
-      Type: Line
-      Lenght: 0.45
-      Direction: -1                  
-      LenghtStep: 0.01
-  Path15:
-     Type: DI
-     Emergency_stop: 0        # 1: Direct Stop of every motion and peripherals 0: Nothing Changes
-     Aspiration_enable: 0     # 1: ON, 0: OFF
-     Tool_enable: 0           # 1: ON, 0: OFF
-     Cablereel_enable: 0      # 1: ON, 0: OFF
-     Cablereel_direction: 0  
-#######################################################
-Trajectory2:
-  size: 13
-  Path1:                     
-      Type: Line
-      Lenght: 0.45
-      Direction: 2                  
-      LenghtStep: 0.01
-  Path2:
-      Type: Line
-      Lenght: 0.07
-      Direction: 1                  
-      LenghtStep: 0.01
-  Path3:
-      Type: Line
-      Lenght: 0.45
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path4:                 
-      Type: Line
-      Lenght: 0.07
-      Direction: 1                  
-      LenghtStep: 0.01
-  Path5:                    
-      Type: Line
-      Lenght: 0.45
-      Direction: 2                  
-      LenghtStep: 0.01
-  Path6:                    
-      Type: Line
-      Lenght: 0.07
-      Direction: 1                  
-      LenghtStep: 0.01
-  Path7:
-      Type: Line
-      Lenght: 0.45
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path8:                 
-      Type: Line
-      Lenght: 0.07
-      Direction: 1                  
-      LenghtStep: 0.01
-  Path9:                    
-      Type: Line
-      Lenght: 0.45
-      Direction: 2                  
-      LenghtStep: 0.01
-  Path10:                    
-      Type: Line
-      Lenght: 0.07
-      Direction: 1                  
-      LenghtStep: 0.01
-  Path11:
-      Type: Line
-      Lenght: 0.45
-      Direction: -2                  
-      LenghtStep: 0.01
-  Path12:                 
-      Type: Line
-      Lenght: 0.07
-      Direction: 1                  
-      LenghtStep: 0.01
-  Path13:                    
-      Type: Line
-      Lenght: 0.45
-      Direction: 2                  
       LenghtStep: 0.01
 
+# Trajectory2:
+#   size: 1
 #   Path1:
-#       Type: Circle
-#       Radius: 0.45
-#       StartAngle: 0
-#       EndAngle: 360
-#       AngleStep: 3
-#   Path2:
-#       Type: Line
-#       Lenght: 0.4
-#       Direction: 1                  
-#       LenghtStep: 0.01
-#   Path2:
-#      Type: DI
-#      Emergency_stop: 0        # 1: Direct Stop of every motion and peripherals 0: Nothing Changes
-#      Aspiration_enable: 0     # 1: ON, 0: OFF
-#      Tool_enable: 0           # 1: ON, 0: OFF
-#      Cablereel_enable: 0      # 1: ON, 0: OFF
-#      Cablereel_direction: 0
+#       Type: Pose
+#       Name: Home

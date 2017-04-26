@@ -1,16 +1,21 @@
 #include <ros/ros.h>
-
+#include <ros/package.h>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
-
+#include <std_msgs/Int32MultiArray.h>
 
 #include <moveit/move_group_interface/move_group.h>
 #include <moveit/robot_trajectory/robot_trajectory.h>
+#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
+#include <moveit/robot_state/robot_state.h>
 #include <moveit/trajectory_processing/iterative_time_parameterization.h>
 
+#include <yaml-cpp/yaml.h> 
+#include <string.h>
+#include <sstream>
 #include "path.h"
 
-void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_interface::MoveGroup::Plan &plan, std::vector<geometry_msgs::Pose>& waypoints){
+void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_interface::MoveGroup::Plan &plan, std::vector<geometry_msgs::Pose>& waypoints, std::string& moveit_group){
   moveit_msgs::RobotTrajectory trajectory_msg;
 
   double fraction = arm.computeCartesianPath(waypoints,
@@ -39,7 +44,7 @@ void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_i
 
   if(fraction == 1){
     ROS_INFO("EXECUTING....");
-      arm.execute(plan);
+      arm.asyncExecute(plan);
   }
 }
 
@@ -49,21 +54,18 @@ int main(int argc, char **argv)
 {
   Path path;
   bool success;
-  std::string package_path = ros::package::getPath("P3_UVic");
+  std::string package_path = ros::package::getPath("p3_uvic");
 
   YAML::Node yaml_config  = YAML::LoadFile(package_path+"/config/trajectory.yaml");
 
   int trajectories_size = yaml_config["Totalsize"].as<int>();
 
-  ROS_INFO_STREAM("3");
-
   std::vector<geometry_msgs::Pose> waypoints;
 
-        ros::init(argc, argv, "demo_review");
+  ros::init(argc, argv, "p3_uvic");
   ros::NodeHandle nh;
 
-  ros::Publisher pub_di = nh.advertise<std_msgs::Int32MultiArray>("/b2r_beckhoff/digital_commands",10);
-        ros::AsyncSpinner spinner(1);
+  ros::AsyncSpinner spinner(1);
   spinner.start();
 
   std::string moveit_group = yaml_config["MoveItGroup"].as<std::string>();
@@ -72,7 +74,7 @@ int main(int argc, char **argv)
   group.setPlannerId("RRTConnectkConfigDefault");
   group.setPlanningTime(10);
   group.setNumPlanningAttempts(5);
-  group.setEndEffectorLink("tcp_link");
+  group.setEndEffectorLink("ee_link");
 
   group.setStartStateToCurrentState();
   geometry_msgs::Pose startingPose = group.getCurrentPose().pose;
@@ -81,7 +83,7 @@ int main(int argc, char **argv)
 
   for(int j=1; j <= trajectories_size; j++){
 
-    auto trajectory_node = yaml_config["Trajectory" + std::to_string(j)];
+    YAML::Node trajectory_node = yaml_config["Trajectory" + std::to_string(j)];
     int path_size = trajectory_node["size"].as<int>();
 
     for(int k = 1; k <= path_size; k++){
@@ -112,16 +114,9 @@ int main(int argc, char **argv)
 
         startingPose = waypoints.back();
 
-      }else if (path_type.find("DI") != std::string::npos){
-        std_msgs::Int32MultiArray di_msg;
-
-        di_msg.data.push_back(path_node["Emergency_stop"].as<int>());
-        di_msg.data.push_back(path_node["Aspiration_enable"].as<int>());
-        di_msg.data.push_back(path_node["Tool_enable"].as<int>());
-        di_msg.data.push_back(path_node["Cablereel_enable"].as<int>());
-        di_msg.data.push_back(path_node["Cablereel_direction"].as<int>());
-
-        pub_di.publish(di_msg);
+      }else if (path_type.find("Pose") != std::string::npos){
+        group.setNamedTarget(path_node["Name"].as<std::string>());
+        group.move();
       }
     }
 
