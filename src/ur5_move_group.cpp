@@ -15,7 +15,7 @@
 #include <sstream>
 #include "path.h"
 
-void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_interface::MoveGroup::Plan &plan, std::vector<geometry_msgs::Pose>& waypoints, std::string& moveit_group){
+bool executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_interface::MoveGroup::Plan &plan, std::vector<geometry_msgs::Pose>& waypoints, std::string& moveit_group){
   moveit_msgs::RobotTrajectory trajectory_msg;
 
   double fraction = arm.computeCartesianPath(waypoints,
@@ -44,7 +44,7 @@ void executePath( moveit::planning_interface::MoveGroup &arm, moveit::planning_i
 
   if(fraction == 1){
     ROS_INFO("EXECUTING....");
-      arm.asyncExecute(plan);
+      arm.execute(plan);
   }
 }
 
@@ -85,6 +85,7 @@ int main(int argc, char **argv)
 
     YAML::Node trajectory_node = yaml_config["Trajectory" + std::to_string(j)];
     int path_size = trajectory_node["size"].as<int>();
+    bool isPose = false;
 
     for(int k = 1; k <= path_size; k++){
 
@@ -92,6 +93,7 @@ int main(int argc, char **argv)
       std::string path_type = path_node["Type"].as<std::string>();
 
       if(path_type.find("Circle") != std::string::npos){
+
         double radius = path_node["Radius"].as<double>();
         double start_angle = path_node["StartAngle"].as<double>();
         double end_angle = path_node["EndAngle"].as<double>();
@@ -115,12 +117,14 @@ int main(int argc, char **argv)
         startingPose = waypoints.back();
 
       }else if (path_type.find("Pose") != std::string::npos){
+        
         group.setNamedTarget(path_node["Name"].as<std::string>());
         group.move();
+        isPose = true;
       }
     }
 
-    executePath(group, my_plan, waypoints, moveit_group);
+    if(!isPose) executePath(group, my_plan, waypoints, moveit_group);
 
     group.setStartStateToCurrentState();
     startingPose = group.getCurrentPose().pose;
