@@ -24,6 +24,8 @@ Trajectory2:
   #     StartAngle: 0
   #     EndAngle: 360
   #     AngleStep: 3
-  Path1:
+  
+  #This type of path -> size must be 1
+  Path1:              
       Type: Pose
       Name: up
