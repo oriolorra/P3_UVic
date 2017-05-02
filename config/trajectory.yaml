@@ -1,7 +1,7 @@
 
 #To add more path to the trajectory, you just need to add more paths with its configuration.
 MoveItGroup: manipulator
-Totalsize: 2
+Totalsize: 1
 Trajectory1:
   size: 1
   Path1:
@@ -10,22 +10,26 @@ Trajectory1:
       StartAngle: 0
       EndAngle: 360
       AngleStep: 3
-  # Path1:
-  #     Type: Line
-  #     Lenght: 0.05
-  #     Direction: 1                  
-  #     LenghtStep: 0.01
 
-Trajectory2:
-  size: 1
-  # Path1:
-  #     Type: Circle
-  #     Radius: 0.1
-  #     StartAngle: 0
-  #     EndAngle: 360
-  #     AngleStep: 3
-  
-  #This type of path -> size must be 1
-  Path1:              
-      Type: Pose
-      Name: up
+
+
+###########################
+##       EXAMPLES        ##
+###########################
+
+# Path1:
+#     Type: Line
+#     Lenght: 0.05
+#     Direction: 1                  
+#     LenghtStep: 0.01
+
+# Path1:
+#     Type: Circle
+#     Radius: 0.1
+#     StartAngle: 0
+#     EndAngle: 360
+#     AngleStep: 3
+
+# Path1:                #This type of path -> size must be 1
+#     Type: Pose
+#     Name: up

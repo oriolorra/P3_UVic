@@ -54,13 +54,15 @@ int main(int argc, char **argv)
 {
   Path path;
   bool success;
-  std::string package_path = ros::package::getPath("p3_uvic");
 
+  std::string package_path = ros::package::getPath("p3_uvic");
   YAML::Node yaml_config  = YAML::LoadFile(package_path+"/config/trajectory.yaml");
 
   int trajectories_size = yaml_config["Totalsize"].as<int>();
 
+  // Initialize trajectory waypoints array
   std::vector<geometry_msgs::Pose> waypoints;
+  waypoints.clear();
 
   ros::init(argc, argv, "p3_uvic");
   ros::NodeHandle nh;
@@ -68,6 +70,7 @@ int main(int argc, char **argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
+  // MoveIt! configuration for UR5
   std::string moveit_group = yaml_config["MoveItGroup"].as<std::string>();
   moveit::planning_interface::MoveGroup group(yaml_config["MoveItGroup"].as<std::string>());
   moveit::planning_interface::MoveGroup::Plan my_plan;
@@ -75,61 +78,41 @@ int main(int argc, char **argv)
   group.setPlanningTime(10);
   group.setNumPlanningAttempts(5);
   group.setEndEffectorLink("ee_link");
-
+ 
+  // set start state of the simulated robot to the current state
   group.setStartStateToCurrentState();
+
+  // start trajectory with the currrent state
   geometry_msgs::Pose startingPose = group.getCurrentPose().pose;
-  ROS_INFO_STREAM("Starting POSE: " << startingPose.position.x << "  " << startingPose.position.y << "  " << startingPose.position.z);
-  waypoints.clear();
 
   for(int j=1; j <= trajectories_size; j++){
 
-    YAML::Node trajectory_node = yaml_config["Trajectory" + std::to_string(j)];
-    int path_size = trajectory_node["size"].as<int>();
-    bool isPose = false;
+    //     COMPLETAR CODI
+    int path_size; 
 
     for(int k = 1; k <= path_size; k++){
 
-      auto path_node = trajectory_node["Path" + std::to_string(k)];
-      std::string path_type = path_node["Type"].as<std::string>();
+      //     COMPLETAR CODI
+      std::string path_type;
 
       if(path_type.find("Circle") != std::string::npos){
 
-        double radius = path_node["Radius"].as<double>();
-        double start_angle = path_node["StartAngle"].as<double>();
-        double end_angle = path_node["EndAngle"].as<double>();
-        double step = path_node["AngleStep"].as<double>();
-        int clockwise = (start_angle >= end_angle ) ? -1: 1;
-
-        ROS_INFO_STREAM("CIRCLE: " << radius << "  " << start_angle << "  " << end_angle << "  " << step << " " << clockwise);
-        path.getCircleTrajectoryEEPlane(startingPose, radius, start_angle, end_angle, step, clockwise,  waypoints);
-
-        startingPose = waypoints.back();
+        //     COMPLETAR CODI
 
       }else if (path_type.find("Line") != std::string::npos){
 
-        double lenght = path_node["Lenght"].as<double>();
-        int direction = path_node["Direction"].as<double>();             //   1,-1 -> x,-x      2,-2 -> y,-y      3,-3 -> z,-z
-        double step = path_node["LenghtStep"].as<double>();
-
-        ROS_INFO_STREAM("LINE : " << lenght << "  " << direction << "  " << step );
-        path.getLineTrajectoryEEPlane(startingPose, lenght, direction, step, waypoints);
-
-        startingPose = waypoints.back();
+        //     COMPLETAR CODI
 
       }else if (path_type.find("Pose") != std::string::npos){
-        
-        group.setNamedTarget(path_node["Name"].as<std::string>());
-        group.move();
-        isPose = true;
+         
+        //     COMPLETAR CODI
+
+         group.move();
       }
     }
 
-    if(!isPose) executePath(group, my_plan, waypoints, moveit_group);
-
-    group.setStartStateToCurrentState();
-    startingPose = group.getCurrentPose().pose;
-    waypoints.clear();
-    ROS_INFO_STREAM("Starting POSE: " << startingPose.position.x << "  " << startingPose.position.y << "  " << startingPose.position.z);
+    //     COMPLETAR CODI
+  
   }
 
   return 0;

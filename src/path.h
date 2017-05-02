@@ -42,7 +42,7 @@ class Path{
                              const double startingAngleDeg,
                              const double endAngleDeg,
                              const double stepDeg,
-                             const int clockwise,
+                             const int clockwise,       // 1,-1 -> clk-unclk
                              std::vector<geometry_msgs::Pose> &waypoints);
 
     // bool getLineTrajectoryXBase(const geometry_msgs::Pose &startingPose,
@@ -65,7 +65,7 @@ class Path{
 
     bool getLineTrajectoryEEPlane(const geometry_msgs::Pose &startingPose,
                        const double distance,
-                       const int direction,
+                       const int direction,   // 1,-1 -> x,-x     2,-2 -> y,-y        3,-3 -> z,-z
                        const double step,
                        std::vector<geometry_msgs::Pose> &waypoints);
 };
