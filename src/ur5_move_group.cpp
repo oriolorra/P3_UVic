@@ -55,18 +55,22 @@ int main(int argc, char **argv)
   Path path;
   bool success;
 
+  //Find path from this package
   std::string package_path = ros::package::getPath("p3_uvic");
+
+  //Load trajectory file to be read
   YAML::Node yaml_config  = YAML::LoadFile(package_path+"/config/trajectory.yaml");
 
+  //Get parameter Totalsize from YAML file
   int trajectories_size = yaml_config["Totalsize"].as<int>();
 
   // Initialize trajectory waypoints array
   std::vector<geometry_msgs::Pose> waypoints;
   waypoints.clear();
 
+  // Initialize ROS
   ros::init(argc, argv, "p3_uvic");
   ros::NodeHandle nh;
-
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
@@ -85,33 +89,70 @@ int main(int argc, char **argv)
   // start trajectory with the currrent state
   geometry_msgs::Pose startingPose = group.getCurrentPose().pose;
 
+  //Loop for Trajectories
   for(int j=1; j <= trajectories_size; j++){
 
-    //     COMPLETAR CODI
-    int path_size; 
+    //Get all trajectory 
+    YAML::Node trajectory_node = yaml_config["Trajectory" + std::to_string(j)];
 
+    //Get size of trajectory
+    int path_size = trajectory_node["size"].as<int>(); 
+
+    bool isPose = false;
+
+    //Loop for Paths
     for(int k = 1; k <= path_size; k++){
 
-      //     COMPLETAR CODI
-      std::string path_type;
+      //Get path
+      auto path_node = trajectory_node["Path" + std::to_string(k)];
+
+      //Get type of the path
+      std::string path_type = path_node["Type"].as<std::string>();
 
       if(path_type.find("Circle") != std::string::npos){
 
-        //     COMPLETAR CODI
+        // Read parameters from YAML
+        // Call 'getCircleTrajectoryEEPlane' function with the right parameters
+        
+        // Save waypoints
+        //...
+
+        //Make 'statingPose', the last point of waypoints
+        //...
 
       }else if (path_type.find("Line") != std::string::npos){
 
-        //     COMPLETAR CODI
+        // Read parameters from YAML
+        // Call 'getLineTrajectoryEEPlane' function with the right parameters
+        
+        // Save waypoints
+        //...
+
+        //Make 'statingPose', the last point of waypoints
+        //...
 
       }else if (path_type.find("Pose") != std::string::npos){
-         
-        //     COMPLETAR CODI
+        
+        // group.setNamedTarget(_name_of_the_pose_);
+        
+        //Move robot to Pose
+        group.move();
 
-         group.move();
+        //If the program enter here, should not execute 'executePath()' 
+        //....
       }
     }
 
-    //     COMPLETAR CODI
+    //Execute trajectory 
+    if(!isPose) executePath(group, my_plan, waypoints, moveit_group);
+
+    //Update pose of the robot 
+    group.setStartStateToCurrentState();
+    
+    //Get current state of the robot, to start next trajectory on the right place
+    startingPose = group.getCurrentPose().pose;
+
+    waypoints.clear();
   
   }
 

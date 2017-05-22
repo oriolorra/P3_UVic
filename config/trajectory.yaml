@@ -16,11 +16,10 @@ Trajectory1:
 ###########################
 ##       EXAMPLES        ##
 ###########################
-
 # Path1:
 #     Type: Line
 #     Lenght: 0.05
-#     Direction: 1                  
+#     Direction: 1           1/-1 -> x/-x ---- 2/-2 -> y/-y ---- 3/-3 -> z/-z    
 #     LenghtStep: 0.01
 
 # Path1:
@@ -30,6 +29,6 @@ Trajectory1:
 #     EndAngle: 360
 #     AngleStep: 3
 
-# Path1:                #This type of path -> size must be 1
+# Path1:                #IMPORTANT ->The trajectory with this path must be size 1
 #     Type: Pose
 #     Name: up
